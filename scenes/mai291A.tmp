@@ -87,6 +87,9 @@ use_collision = true
 size = Vector3(1, 2, 2)
 
 [node name="player" parent="." instance=ExtResource("3_rjc8b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.01, 0)
+speed = 5
+mouse_sens = 0.002
 
 [node name="enemy" parent="." instance=ExtResource("5_tme4o")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.2253, 1, -3.61921)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dnimlbn78cq4q"]
+[gd_scene load_steps=10 format=3 uid="uid://dnimlbn78cq4q"]
 
 [ext_resource type="Script" path="res://scenes/WeaponManager.gd" id="1_m425h"]
 [ext_resource type="Script" path="res://scenes/Weapon.gd" id="2_scgt8"]
@@ -41,7 +41,7 @@ func _physics_process(delta):
 	
 	_handle_jump(delta)
 	
-	_handle_movement()
+	_handle_movement(delta)
 	
 	_handle_head_bob(delta)
 	
@@ -60,7 +60,7 @@ func _apply_gravity(delta):
 		# Add the gravity.
 		velocity.y -= gravity * delta
 
-func _handle_movement():
+func _handle_movement(delta):
 	# Get the input direction and handle the movement/deceleration.
 	var input_dir = Input.get_vector(\"left\", \"right\", \"up\", \"down\")
 	direction = (head.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
@@ -76,12 +76,9 @@ func _handle_movement():
 		velocity.x = lerp(velocity.x, direction.x * speed, 0.05)
 		velocity.z = lerp(velocity.z, direction.z * speed, 0.05)
 	
-#	_handle_strafe(input_dir)
+	_handle_strafe(input_dir)
 	
 func _handle_weapon(delta):
-	if Input.is_action_just_pressed('reload') and weapon.has_method('reload'):
-		weapon.reload()
-		
 	if Input.is_action_just_pressed('prev_weapon'):
 		weapon_manager.cycle_weapon(false)
 		weapon = weapon_manager.selected_weapon
@@ -100,7 +97,6 @@ func _handle_weapon(delta):
 
 	if Input.is_action_just_released('shoot'):
 		shot_ready = true
-		weapon.reset_time()
 
 func _handle_jump(delta):
 	if is_on_floor():
@@ -148,15 +144,8 @@ albedo_color = Color(0.215686, 0.223529, 0.207843, 1)
 material = SubResource("StandardMaterial3D_s7ilr")
 size = Vector3(0.05, 0.1, 0.35)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fqby5"]
-albedo_color = Color(0.168627, 0.501961, 0.360784, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_vlk6e"]
-material = SubResource("StandardMaterial3D_fqby5")
-size = Vector3(0.2, 0.2, 0.2)
-
 [node name="player" type="CharacterBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.29126, 0)
 script = SubResource("GDScript_nps56")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
@@ -166,7 +155,7 @@ mesh = SubResource("CapsuleMesh_7kq1m")
 shape = SubResource("ConvexPolygonShape3D_2y4o1")
 
 [node name="head" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.44406, 0)
 
 [node name="Camera3D" type="Camera3D" parent="head"]
 
@@ -194,6 +183,8 @@ script = ExtResource("2_scgt8")
 weapon_name = "Glock 32"
 damage = 12
 mag_size = 13
+fire_mode = null
+rpm = null
 reload_time = 0.5
 weight = 3
 mesh = NodePath("MeshInstance3D")
@@ -201,18 +192,3 @@ mesh = NodePath("MeshInstance3D")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="head/Camera3D/WeaponManager/Glock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.357224, 0, -1.01724)
 mesh = SubResource("BoxMesh_qsphd")
-
-[node name="MAC-10" type="Node3D" parent="head/Camera3D/WeaponManager" node_paths=PackedStringArray("mesh")]
-script = ExtResource("2_scgt8")
-weapon_name = "MAC-10"
-damage = 8
-mag_size = 30
-fire_mode = 1
-rpm = 1145
-reload_time = 0.7
-weight = 4
-mesh = NodePath("MeshInstance3D")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="head/Camera3D/WeaponManager/MAC-10"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.357224, 0, -1.01724)
-mesh = SubResource("BoxMesh_vlk6e")
